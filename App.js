@@ -1,9 +1,9 @@
 import react, { useState } from "react";
-import LoginPage from "./pages/loginPage";
+import LoginPage from "./pages/Login/loginPage";
 import { Text } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import ListPage from "./pages/listPage";
+import ListPage from "./pages/List/listPage";
 
 const Stack = createStackNavigator();
 
