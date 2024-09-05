@@ -4,6 +4,7 @@ import { Text } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import ListPage from "./pages/List/listPage";
+import NoteForm from "./components/NoteForm/noteForm";
 
 const Stack = createStackNavigator();
 
@@ -12,8 +13,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {isSignedIn ? (
+      {isSignedIn ? (
+        <Stack.Navigator>
           <Stack.Screen
             name="List"
             options={{
@@ -29,14 +30,17 @@ export default function App() {
             }}
             component={ListPage}
           />
-        ) : (
+          <Stack.Screen name="Add Note" component={NoteForm} />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator>
           <Stack.Screen
             name="Login"
             component={LoginPage}
             initialParams={{ setIsSignedIn: setIsSignedIn }}
           />
-        )}
-      </Stack.Navigator>
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
