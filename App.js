@@ -4,7 +4,7 @@ import { Text } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import ListPage from "./pages/List/listPage";
-import NoteForm from "./components/NoteForm/noteForm";
+import routerNoteForm from "./components/NoteForm/routerNoteForm";
 
 const Stack = createStackNavigator();
 
@@ -30,7 +30,7 @@ export default function App() {
             }}
             component={ListPage}
           />
-          <Stack.Screen name="Add Note" component={NoteForm} />
+          <Stack.Screen name="Add Note" component={routerNoteForm} />
         </Stack.Navigator>
       ) : (
         <Stack.Navigator>

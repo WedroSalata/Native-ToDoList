@@ -14,7 +14,7 @@ import ButtonMenu from "./buttonMenu";
 import { ListItem } from "../../types/mainTypes";
 import { TESTDATA } from "../../helpers/dataMock";
 
-export default function ListPage() {
+export default function ListPage({ navigation }) {
   const [listData, setListData] = useState<ListItem[]>(TESTDATA);
   const [selectedId, setSelectedId] = useState<number | undefined>();
   const [editorOpen, setEditorOpen] = useState<boolean>(false);
@@ -27,7 +27,6 @@ export default function ListPage() {
       }
       list.unshift(item);
       setListData(list);
-      closeEditor();
     },
     [listData, selectedId]
   );
@@ -42,7 +41,10 @@ export default function ListPage() {
 
   const addHandler = useCallback(() => {
     setSelectedId(undefined);
-    setEditorOpen((state) => !state);
+    navigation.navigate({
+      name: "Add Note",
+      params: { saveHandler },
+    });
   }, []);
 
   const removeHandler = useCallback(() => {

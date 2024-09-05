@@ -14,6 +14,11 @@ function NoteForm({ saveHandler, closeEditor, item }: Props) {
   const [content, setContent] = useState<string>(item?.content ?? "");
   const [date, setDate] = useState<string>(item?.date ?? "");
 
+  const onSubmit = () => {
+    saveHandler({ name, content, date });
+    closeEditor();
+  };
+  
   const clearForm = () => {
     setName("");
     setContent("");
@@ -44,7 +49,7 @@ function NoteForm({ saveHandler, closeEditor, item }: Props) {
             !name ? [styles.button, styles.disabledButton] : [styles.button]
           }
           disabled={!name}
-          onPress={() => saveHandler({ name, content, date })}
+          onPress={() => onSubmit()}
         >
           <Text
             style={
