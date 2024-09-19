@@ -1,34 +1,52 @@
+import * as Location from "expo-location";
+import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useState } from "react";
 import {
-  Text,
-  View,
-  Modal,
+  Button,
   FlatList,
-  TouchableOpacity,
   ListRenderItemInfo,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import styles from "./styles";
+import { useDispatch, useSelector } from "react-redux";
 import NoteForm from "../../components/NoteForm/noteForm";
-import ButtonMenu from "./buttonMenu";
+import { add, edit, remove } from "../../store/slice";
 import { ListItem } from "../../types/mainTypes";
-import { TESTDATA } from "../../helpers/dataMock";
+import ButtonMenu from "./buttonMenu";
+import styles from "./styles";
 
 export default function ListPage({ navigation }) {
-  const [listData, setListData] = useState<ListItem[]>(TESTDATA);
   const [selectedId, setSelectedId] = useState<number | undefined>();
   const [editorOpen, setEditorOpen] = useState<boolean>(false);
+  const [location, setLocation] = useState("");
+
+  const noteArray: ListItem[] = useSelector(
+    (state: any) => state.noteState.noteArray
+  );
+
+  const getData = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("error");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(JSON.stringify(location));
+  };
+  const dispatch = useDispatch();
 
   const saveHandler = useCallback(
     (item: ListItem) => {
-      const list = [...listData];
       if (selectedId !== undefined) {
-        list.splice(selectedId, 1);
+        dispatch(edit({ noteArray: item, index: selectedId }));
+      } else {
+        dispatch(add(item));
       }
-      list.unshift(item);
-      setListData(list);
     },
-    [listData, selectedId]
+    [selectedId, noteArray]
   );
 
   const closeEditor = useCallback(() => {
@@ -49,12 +67,10 @@ export default function ListPage({ navigation }) {
 
   const removeHandler = useCallback(() => {
     if (selectedId !== undefined) {
-      const list = [...listData];
-      list.splice(selectedId, 1);
+      dispatch(remove(selectedId));
       setSelectedId(undefined);
-      setListData(list);
     }
-  }, [listData, selectedId]);
+  }, [noteArray, selectedId]);
 
   return (
     <View style={styles.container}>
@@ -69,12 +85,12 @@ export default function ListPage({ navigation }) {
         <NoteForm
           saveHandler={saveHandler}
           closeEditor={closeEditor}
-          item={selectedId >= 0 ? listData[selectedId] : undefined}
+          item={selectedId >= 0 ? noteArray[selectedId] : undefined}
         />
       </Modal>
       <View style={styles.list}>
         <FlatList
-          data={listData}
+          data={noteArray}
           renderItem={(item) => CellRender(item, selectedId, setSelectedId)}
           extraData={selectedId}
         />
@@ -85,6 +101,8 @@ export default function ListPage({ navigation }) {
         editHandler={editHandler}
         removeHandler={removeHandler}
       />
+      <Text>{location}</Text>
+      <Button title={"location"} onPress={() => getData()} />
       <StatusBar style="auto" />
     </View>
   );
